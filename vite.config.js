@@ -1,29 +1,34 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from 'node:url';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
   ],
-     
-    // server: {
-    //       host: '10.169.141.193', // This allows access from other devices on the network
-    //     // host: '10.169.142.105', // This allows access from other devices on the network
-    //     // host: '10.169.142.58', // This allows access from other devices on the network
-    //     // host: '10.169.142.63',
-    //     // host: '10.169.142.131',
-        
-    //     port: 5173,
-    //     proxy: {
-    //         '/api': 'http://10.169.141.193:8001' // Adjust this URL if needed
-    //     }
-    // },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
-})
+  },
+  build: {
+    outDir: 'dist', // Output directory for the build
+    assetsDir: 'assets', // Directory for assets
+    assetsInlineLimit: 4096, // Inline assets below this size
+    cssCodeSplit: true, // Enable CSS code splitting
+    sourcemap: true, // Generate sourcemaps
+    minify: 'esbuild', // Use esbuild for minification
+    terserOptions: {
+      compress: {
+        drop_console: true, // Remove console logs in production
+        drop_debugger: true // Remove debugger statements in production
+      }
+    }
+  },
+  esbuild: {
+    logOverride: {
+      'this-is-undefined-in-esm': 'silent' // Suppress specific warnings
+    }
+  },
+  assetsInclude: ['**/*.lottie', '**/*.json','**/*.xml'] // Include .lottie and .json files in the build
+});
